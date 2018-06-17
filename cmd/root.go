@@ -9,7 +9,7 @@ import (
 
 const (
 	DefaultTagsDB      = "/etc/tags.db"
-	DefaultLockTimeout = 10 * time.Second
+	DefaultLockTimeout = 5 * time.Second
 	BucketName         = "tags"
 	AssignmentSymbol   = "="
 )
