@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	bolt "github.com/coreos/bbolt"
+	"github.com/dlipovetsky/tagrr/dbutil"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +34,7 @@ var (
 					if err != nil {
 						fmt.Errorf("failed to parse assignment %q: %s", arg, err)
 					}
-					err = b.Put([]byte(k), []byte(v))
+					err = dbutil.Put(b, k, v)
 					if err != nil {
 						log.Fatal("failed to update tags db: %s", err)
 					}

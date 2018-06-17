@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"log"
 
 	bolt "github.com/coreos/bbolt"
+	"github.com/dlipovetsky/tagrr/dbutil"
 	"github.com/spf13/cobra"
 )
 
@@ -23,13 +23,16 @@ var (
 		Long:  `tbd`,
 		Args: func(cmd *cobra.Command, args []string) error {
 			if all && len(prefix) > 0 {
-				return fmt.Errorf("do not use the `all` and `prefix` flag together")
+				return fmt.Errorf("must use either the `all` or the `prefix` flag")
 			}
 			if all && len(args) > 0 {
-				return fmt.Errorf("do not use keys with the `all` flag")
+				return fmt.Errorf("must omit keys when using the `all` flag")
 			}
 			if len(prefix) > 0 && len(args) > 0 {
-				return fmt.Errorf("do not use keys with the `prefix` flag")
+				return fmt.Errorf("must omit keys when using the `prefix` flag")
+			}
+			if !all && len(prefix) == 0 && len(args) == 0 {
+				return fmt.Errorf("must specify at least one key")
 			}
 			return nil
 		},
@@ -40,7 +43,7 @@ var (
 			}
 			defer db.Close()
 
-			result := make(map[string]string)
+			var result map[string]string
 
 			db.View(func(tx *bolt.Tx) error {
 				b := tx.Bucket([]byte(BucketName))
@@ -51,27 +54,16 @@ var (
 				}
 
 				if all {
-					b.ForEach(func(k, v []byte) error {
-						result[string(k)] = string(v)
-						return nil
-					})
+					result = dbutil.GetAll(b)
 					return nil
 				}
 
 				if len(prefix) > 0 {
-					c := b.Cursor()
-					for k, v := c.Seek([]byte(prefix)); k != nil && bytes.HasPrefix(k, []byte(prefix)); k, v = c.Next() {
-						result[string(k)] = string(v)
-					}
+					result = dbutil.GetPrefix(b, prefix)
 					return nil
 				}
 
-				for _, k := range args {
-					if v := b.Get([]byte(k)); v != nil {
-						result[k] = string(v)
-					}
-				}
-
+				result = dbutil.GetKeys(b, args)
 				return nil
 			})
 
