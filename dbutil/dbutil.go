@@ -37,3 +37,7 @@ func GetAll(b *bolt.Bucket) map[string]string {
 func Put(b *bolt.Bucket, key, value string) error {
 	return b.Put([]byte(key), []byte(value))
 }
+
+func Delete(b *bolt.Bucket, key string) error {
+	return b.Delete([]byte(key))
+}

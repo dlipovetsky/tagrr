@@ -41,3 +41,7 @@ Use tagrr to get and set tags. Tags are keys with optional values. Keys and valu
         "baz": "3",
         "foo": "1",
     }
+
+### Unset (delete) tags
+
+    $ tagrr unset baz foo
