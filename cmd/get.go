@@ -113,6 +113,6 @@ func printJSON(out io.Writer, result map[string]string) {
 func init() {
 	getCmd.PersistentFlags().BoolVarP(&all, "all", "a", DefaultAll, "tags db file")
 	getCmd.PersistentFlags().StringVarP(&prefix, "prefix", "p", DefaultPrefix, "tags db file")
-	getCmd.PersistentFlags().StringVarP(&format, "format", "o", DefaultFormat, fmt.Sprintf("output format, allowed formats: %s", strings.Join(AllowedFormats, ",")))
+	getCmd.PersistentFlags().StringVarP(&format, "output", "o", DefaultFormat, fmt.Sprintf("output format, allowed formats: %s", strings.Join(AllowedFormats, ",")))
 	rootCmd.AddCommand(getCmd)
 }
