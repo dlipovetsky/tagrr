@@ -1,8 +1,12 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"os"
+	"strings"
 
 	bolt "github.com/coreos/bbolt"
 	"github.com/dlipovetsky/tagrr/dbutil"
@@ -12,11 +16,15 @@ import (
 const (
 	DefaultPrefix = ""
 	DefaultAll    = false
+	DefaultFormat = "simple"
 )
+
+var AllowedFormats = []string{"simple", "json"}
 
 var (
 	prefix string
 	all    bool
+	format string
 	getCmd = &cobra.Command{
 		Use:   "get",
 		Short: "get tags",
@@ -67,15 +75,36 @@ var (
 				return nil
 			})
 
-			for k, v := range result {
-				fmt.Printf("%s:%s\n", k, v)
+			switch format {
+			case "json":
+				printJSON(os.Stdout, result)
+			case "simple":
+				printSimple(os.Stdout, result)
+			default:
+				log.Fatalf("Error: unknown format %q, allowed formats are: %s", format, strings.Join(AllowedFormats, ","))
 			}
 		},
 	}
 )
 
+func printSimple(out io.Writer, result map[string]string) {
+	for k, v := range result {
+		fmt.Fprintf(out, "%s%s%s\n", k, AssignmentSymbol, v)
+	}
+}
+
+func printJSON(out io.Writer, result map[string]string) {
+	j, err := json.MarshalIndent(result, "", "\t")
+	if err != nil {
+		log.Fatalf("failed to format JSON: %s", err)
+	}
+	j = append(j, byte('\n'))
+	out.Write(j)
+}
+
 func init() {
 	getCmd.PersistentFlags().BoolVarP(&all, "all", "a", DefaultAll, "tags db file")
 	getCmd.PersistentFlags().StringVarP(&prefix, "prefix", "p", DefaultPrefix, "tags db file")
+	getCmd.PersistentFlags().StringVarP(&format, "format", "o", DefaultFormat, fmt.Sprintf("output format, allowed formats: %s", strings.Join(AllowedFormats, ",")))
 	rootCmd.AddCommand(getCmd)
 }
