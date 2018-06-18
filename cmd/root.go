@@ -19,7 +19,7 @@ var (
 	lockTimeout time.Duration
 	rootCmd     = &cobra.Command{
 		Use:   "tagrr",
-		Short: "tagrr is a simple and transactional tags database",
+		Short: "tagrr is a simple, transactional tags database",
 		Long: `Use tagrr to get and set tags (keys with optional values).
 Many tagrr processes can concurrently read the db. Only one
 tagrr process can write to the db, and not while any other
