@@ -29,15 +29,15 @@ Use tagrr to get and set tags. Tags are keys with optional values. Keys and valu
 ### Get all tags
 
     $ tagrr get --all
-    foo:1
     bar:2
     baz:3
+    foo:1
 
 ### Get tags in JSON
 
     $ tagrr get --all --output json
     {
-        "foo": "1",
         "bar": "2",
         "baz": "3",
+        "foo": "1",
     }
