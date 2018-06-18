@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -96,8 +97,13 @@ func GetCmd(db *bolt.DB, lockTimeout time.Duration, tags []string) (map[string]s
 }
 
 func printSimple(out io.Writer, result map[string]string) {
-	for k, v := range result {
-		fmt.Fprintf(out, "%s%s%s\n", k, AssignmentSymbol, v)
+	keys := make([]string, 0)
+	for k := range result {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		fmt.Fprintf(out, "%s%s%s\n", k, AssignmentSymbol, result[k])
 	}
 }
 
