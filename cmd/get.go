@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	bolt "github.com/coreos/bbolt"
 	"github.com/dlipovetsky/tagrr/dbutil"
@@ -51,29 +52,10 @@ var (
 			}
 			defer db.Close()
 
-			var result map[string]string
-
-			db.View(func(tx *bolt.Tx) error {
-				b := tx.Bucket([]byte(BucketName))
-
-				// No tags in this database
-				if b == nil {
-					return nil
-				}
-
-				if all {
-					result = dbutil.GetAll(b)
-					return nil
-				}
-
-				if len(prefix) > 0 {
-					result = dbutil.GetPrefix(b, prefix)
-					return nil
-				}
-
-				result = dbutil.GetKeys(b, args)
-				return nil
-			})
+			result, err := GetCmd(db, lockTimeout, args)
+			if err != nil {
+				log.Fatalf("Error: %s\n", err)
+			}
 
 			switch format {
 			case "json":
@@ -86,6 +68,32 @@ var (
 		},
 	}
 )
+
+func GetCmd(db *bolt.DB, lockTimeout time.Duration, tags []string) (map[string]string, error) {
+	var result map[string]string
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(BucketName))
+
+		// No tags in this database
+		if b == nil {
+			return nil
+		}
+
+		if all {
+			result = dbutil.GetAll(b)
+			return nil
+		}
+
+		if len(prefix) > 0 {
+			result = dbutil.GetPrefix(b, prefix)
+			return nil
+		}
+
+		result = dbutil.GetKeys(b, tags)
+		return nil
+	})
+	return result, err
+}
 
 func printSimple(out io.Writer, result map[string]string) {
 	for k, v := range result {

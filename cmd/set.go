@@ -32,7 +32,7 @@ var (
 			}
 			return nil
 		},
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(cmd *cobra.Command, _ []string) {
 			db, err := bolt.Open(tagsDB, 0600, &bolt.Options{Timeout: lockTimeout})
 			if err != nil {
 				log.Fatalf("Error: failed to open tags db %q: %s\n", tagsDB, err)
