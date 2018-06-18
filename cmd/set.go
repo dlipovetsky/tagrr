@@ -50,7 +50,7 @@ func SetCmd(db *bolt.DB, lockTimeout time.Duration, tags map[string]string) erro
 	return db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte(BucketName))
 		if err != nil {
-			return fmt.Errorf("failed to initialize tags db %q: %s", tagsDB, err)
+			return fmt.Errorf("failed to initialize tags db: %s", err)
 		}
 
 		for k, v := range tags {
