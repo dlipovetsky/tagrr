@@ -16,7 +16,7 @@ var (
 	setCmd    = &cobra.Command{
 		Use:   "set",
 		Short: "set tags",
-		Long:  `tbd`,
+		Long:  `Set tags. Values are optional.`,
 		Args: func(cmd *cobra.Command, args []string) error {
 			minNArgs := cobra.MinimumNArgs(1)
 			if err := minNArgs(cmd, args); err != nil {

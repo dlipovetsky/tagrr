@@ -30,7 +30,7 @@ var (
 	getCmd = &cobra.Command{
 		Use:   "get",
 		Short: "get tags",
-		Long:  `tbd`,
+		Long:  `Get tags.`,
 		Args: func(cmd *cobra.Command, args []string) error {
 			if all && len(prefix) > 0 {
 				return fmt.Errorf("must use either the `all` or the `prefix` flag")
