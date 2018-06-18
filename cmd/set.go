@@ -19,28 +19,31 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			db, err := bolt.Open(tagsDB, 0600, &bolt.Options{Timeout: lockTimeout})
 			if err != nil {
-				log.Fatal("failed to open tags db %q: %s", tagsDB, err)
+				log.Fatalf("Error: failed to open tags db %q: %s\n", tagsDB, err)
 			}
 			defer db.Close()
 
 			err = db.Update(func(tx *bolt.Tx) error {
 				b, err := tx.CreateBucketIfNotExists([]byte(BucketName))
 				if err != nil {
-					log.Fatal("failed to initialize tags db %q: %s", tagsDB, err)
+					return fmt.Errorf("failed to initialize tags db %q: %s", tagsDB, err)
 				}
 
 				for _, arg := range args {
 					k, v, err := parseAssignment(arg)
 					if err != nil {
-						fmt.Errorf("failed to parse assignment %q: %s", arg, err)
+						return fmt.Errorf("failed to parse assignment %q: %s", arg, err)
 					}
 					err = dbutil.Put(b, k, v)
 					if err != nil {
-						log.Fatal("failed to update tags db: %s", err)
+						return fmt.Errorf("failed to set key %q to value %q: %s", k, v, err)
 					}
 				}
 				return nil
 			})
+			if err != nil {
+				log.Fatalf("Error: %s\n", err)
+			}
 		},
 	}
 )

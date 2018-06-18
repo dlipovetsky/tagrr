@@ -47,7 +47,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			db, err := bolt.Open(tagsDB, 0600, &bolt.Options{ReadOnly: true, Timeout: lockTimeout})
 			if err != nil {
-				log.Fatalf("failed to open tags db %q: %s\n", tagsDB, err)
+				log.Fatalf("Error: failed to open tags db %q: %s\n", tagsDB, err)
 			}
 			defer db.Close()
 
