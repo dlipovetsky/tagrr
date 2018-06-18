@@ -4,6 +4,10 @@ Taggr is a simple, transactional tags database, designed to make it easy to tag 
 
 Use tagrr to get and set tags. Tags are keys with optional values. Keys and values are UTF-8 encoded strings. Many tagrr processes can concurrently read the db. Only one tagrr process can write to the db, and not while any other tagrr processes are reading them. Output is sorted in ascending lexicographical order by key.
 
+## Installation
+
+    $ go get github.com/dlipovetsky/tagrr
+
 ## Usage
 
 ### Set tags
